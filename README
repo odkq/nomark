@@ -1,0 +1,101 @@
+Nomark
+======
+
+A simple wiki language, parser and writer for HTML5 and Confluence 4+
+
+There is RestructuredText, POD, Markdown, and a miriad other ascii-readable
+markup languages out there. Using them is usually easy, you get a reference
+for it, run the tools, and get your html/pdf/etc. But how is it making a
+parser for them, and a render to convert them to a new representation?.
+
+I wanted to do a conversor for the infamous confluence wiki system, for
+undisclosed reasons, zerodoc (http://github.com/odkq/zerodoc) was my first
+shoot at it. Then confluence changed it's storage format from their wiki
+markup to a xhtml of some sorts. I tried to change the render and it turned
+out not as easy, just made the render too dependant on the parser.
+
+Restarting from scratch, enter nomark.
+
+This is a header
+----------------
+
+This is some source code:
+
+.
+int main()
+{
+	Matrix3 mat = Matrix3::identity();
+	Vector3 v(0, 0, 1);
+
+ 	cout << mat * v << endl;
+
+ 	system("pause");
+ 	return 0;
+}
+.
+
+Specify a language to get the chunk highlighted
+
+.c.
+/* Comment */
+#include <stdio.h>
+int main(void)
+{
+	printf("Hello, world\n");
+	return 0;
+}
+.
+
+And this is something after the source code.
+
+Code wich is not .multiline. can also be specified, of course.
+
+This is also a header
+---------------------
+
+So some text goes here, we put some attributes in, like *bold*,
+_cursive_, hyperlinks of any type are writen like [this] and resolved
+later. Let's drop some links in UTF-8 like [pedro] and [murciélago]
+(the one murciélago que que *comía* feliz cardillo y kiwi, y era _hindú_ )
+[this:http://www.google.com/]
+[pedro:http://www.gnu.org]
+[murciélago:http://odkq.com]
+
+This is again another header
+----------------------------
+
+Now for some lists and tables and the like
+
+- This is an element on a list
+
+- This is another element on a list
+
+- This is another element on a list, again
+
+- This is another element, spawning multiple lines
+  that are simply joint on output
+
+Now for numbered lists
+
+1. This is a numbered list
+
+2. The numbers can be reordered automatically, so as long as it starts
+   with a number, it's okay
+
+3. Another element
+
+4. There can be white lines between list elements, it does not matter
+   much, except when you want to put two lists one after the other
+   without a proper introduction. As it does not makes much sense,
+   it is not allowed
+
+And yet another header!
+-----------------------
+
+Well let's see tables
+
+*SOON*
+
+Yes, it is a json (or Python) array. In the end more convenient than
+throwing · + - | - · or spaces all around.
+
