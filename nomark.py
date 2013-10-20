@@ -4,11 +4,18 @@
 #
 # This code is licensed under the GPLv3
 #
+from __future__ import print_function
 import re
 from cgi import escape
 import sys
+import csv
 import json
 import codecs
+from cStringIO import StringIO
+from pygments import highlight
+from pygments.lexers import get_lexer_by_name, get_lexer_for_filename, TextLexer
+from pygments.formatters import HtmlFormatter
+from pygments.util import ClassNotFound
 
 class Parser:
     ''' Nomark parser, converting text input into an array of paragraphs '''
@@ -34,9 +41,11 @@ class Parser:
                 continue
             if line[0] == u'.':
                 current['type'] = 'code'
+                if len(line) > 1:
+                    l=line[1:].find('.')
+                current['lang'] = line[1:l+1] if l != -1 else line[1:]
             elif line == '\n':
                 if current['text'][0:2] == u'- ':
-                    print 'list '
                     current['type'] = 'list'
                     current['text'] = current['text'][2:]
                 self.pars.append(current)
@@ -129,6 +138,14 @@ class Parser:
                 return sub['level'], s[:(l/2)]
         return 0, None
 
+# wrap lines in <span>s so that the Moin-generated line numbers work
+class NomarkHtmlFormatter(HtmlFormatter):
+    pass
+    def wrap(self, source, outfile):
+        for i, t in source:
+            yield i, t
+            # 1, '<span class="line">' + line[1] + '</span>'
+
 class Render:
     def __init__(self):
         self.inlist = False
@@ -136,11 +153,22 @@ class Render:
     def header(self, title):
         o = '<!DOCTYPE html>\n<html lang="en">\n'
         o += '<head>\n<meta charset=utf-8>\n<title>{}</title>\n'.format(title)
+        o += '<meta name="viewport" content="width=device-width,'
+        o += 'initial-scale=1.0">\n'
+        o += '<link rel="stylesheet" type="text/css" '
+        o += 'href="dist/css/bootstrap.css" media="screen">\n'
+        o += '<link rel="stylesheet" type="text/css" '
+        o += 'href="dist/css/bootstrap-theme.css" media="screen">\n'
+        o += '<link rel="stylesheet" type="text/css" '
+        o += 'href="syntax.css" media="screen">\n'
+        o += '</head>\n'
         o += '<body>\n'
+        o += '<div class="container">\n'
         return o
 
     def footer(self):
-        o = '</body>\n</html>\n'
+        o = '</div>'
+        o += '</body>\n</html>\n'
         return o
 
     def render(self, parser):
@@ -201,11 +229,32 @@ class Render:
             o += escape(para['text'][i], True) + append
         return o
 
+    def render_table(self, string):
+        r = '<table class="table">'
+        for index, row in enumerate(csv.reader(StringIO(string))):
+            r += '<tr>'
+            for cell in row:
+                tag = 'th' if index == 0 else 'td'
+                r += '<{}>{}</{}>'.format(tag, cell, tag)
+            r += '</tr>'
+            # r += str(row)
+        r +='</table>'
+        return r
+
     def render_code(self, para, links):
         self.inlist = False
-        return '<pre>\n{text}</pre>\n'.format(text=escape(para['text'], True))
+        if para['lang'] == 'table':
+            return self.render_table(para['text'])
+        try:
+            lexer = get_lexer_by_name(para['lang'])
+        except ClassNotFound:
+            lexer = TextLexer()
+        htmlformatter = NomarkHtmlFormatter(linenos=False)
+        result = highlight(para['text'], lexer, htmlformatter)
+        #return '<pre>\n{text}</pre>\n'.format(text=escape(para['text'], True))
+        return '<pre class="syntax">\n{text}</pre>\n'.format(text=result)
 
 nomark = Parser(sys.argv[1])
 html5 = Render()
-print json.dumps(nomark.pars, indent=2)
-print html5.render(nomark)
+# print json.dumps(nomark.pars, indent=2)
+print(html5.render(nomark))

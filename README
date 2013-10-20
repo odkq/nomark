@@ -1,20 +1,30 @@
 Nomark
 ======
 
-A simple wiki language, parser and writer for HTML5 and Confluence 4+
+Yet another simple wiki language, parser and writer for HTML5
+and Confluence 4+
 
-There is RestructuredText, POD, Markdown, and a miriad other ascii-readable
-markup languages out there. Using them is usually easy, you get a reference
-for it, run the tools, and get your html/pdf/etc. But how is it making a
-parser for them, and a render to convert them to a new representation?.
+TL;DR;
+
+There is RestructuredText, POD, Markdown, and a miriad other
+ascii-readable markup languages out there. Using them is usually
+easy, you get a reference for it, run the tools, and get your
+html/pdf/etc. But how is it making a parser for them, and a
+render to convert them to a new representation?. Usually there is
+a tradeoff between generality, portability, features, "natural"
+syntax...
 
 I wanted to do a conversor for the infamous confluence wiki system, for
-undisclosed reasons, zerodoc (http://github.com/odkq/zerodoc) was my first
-shoot at it. Then confluence changed it's storage format from their wiki
-markup to a xhtml of some sorts. I tried to change the render and it turned
-out not as easy, just made the render too dependant on the parser.
+undisclosed reasons, [zerodoc] was my first shoot at it. Then confluence
+changed it's storage format from their wiki markup to a xhtml of some
+sorts. I tried to change the render and it turned out not as easy, just
+made the render too dependant on the parser.
+[zerodoc:http://github.com/odkq/zerodoc]
 
 Restarting from scratch, enter nomark.
+
+Some examples
+-------------
 
 This is a header
 ----------------
@@ -89,13 +99,15 @@ Now for numbered lists
    without a proper introduction. As it does not makes much sense,
    it is not allowed
 
-And yet another header!
------------------------
+Rendering tables
+----------------
 
 Well let's see tables
 
-*SOON*
+.table.
+Header1, Header2, Header3
+Data1, Data2, Data3
+Data4, Data5, Data6
+.
 
-Yes, it is a json (or Python) array. In the end more convenient than
-throwing · + - | - · or spaces all around.
-
+Tables are like code (code 'table') in csv format
