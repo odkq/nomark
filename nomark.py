@@ -11,11 +11,14 @@ import sys
 import csv
 import json
 import codecs
+from string import join as sjoin
 from cStringIO import StringIO
 from pygments import highlight
 from pygments.lexers import get_lexer_by_name, get_lexer_for_filename, TextLexer
 from pygments.formatters import HtmlFormatter
 from pygments.util import ClassNotFound
+
+from subprocess import Popen, PIPE, STDOUT
 
 class Parser:
     ''' Nomark parser, converting text input into an array of paragraphs '''
@@ -241,10 +244,20 @@ class Render:
         r +='</table>'
         return r
 
+    def render_a2s(self, string):
+        p = Popen(['php', '/usr/share/asciitosvg/a2s'],
+                  stdout=PIPE, stdin=PIPE)
+                    # , stderr=STDOUT)
+        # r = '<svg width="237px" height="45px" version="1.1">'
+        r = sjoin(p.communicate(input=string)[0].split('\n')[4:], '\n')
+        return r
+
     def render_code(self, para, links):
         self.inlist = False
         if para['lang'] == 'table':
             return self.render_table(para['text'])
+        elif para['lang'] == 'a2s':
+            return self.render_a2s(para['text'])
         try:
             lexer = get_lexer_by_name(para['lang'])
         except ClassNotFound:

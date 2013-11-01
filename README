@@ -111,3 +111,53 @@ Data4, Data5, Data6
 .
 
 Tables are like code (code 'table') in csv format
+
+ASCII art graphics
+------------------
+
+Some graphics with ascii2svg (taken from the zmq guide)
+
+.a2s.
+               #-------------#
+               | Publisher   |
+               +-------------+
+               | PUB         |
+               '-------------'
+                    bind
+                      |
+                      |
+                   updates
+                      |
+      .---------------+---------------.
+      |               |               |
+   updates         updates         updates
+      |               |               |
+      |               |               |
+      v               v               v
+   connect          connect        connect
+ .------------. .------------. .------------.
+ | SUB        | | SUB        | | SUB        |
+ +------------+ +------------+ +------------+
+ | Subscriber | | Subscriber | | Subscriber |
+ #------------# #------------# #------------#
+.
+
+inlined into the HTML5 output as SVG
+
+
+.a2s.
+#-------#     #-------#
+| REQ   |<--->| REP   |
+#-------#     #-------#
+
+
+#-------#     #--------+--------#     #-------#
+| REQ   |<--->| ROUTER | DEALER |<--->| REP   |
+#-------#     #--------+--------#     #-------#
+
+
+#-------#     #--------+--------#     #--------+--------#     #-------#
+| REQ   |<--->| ROUTER | DEALER |<--->| ROUTER | DEALER |<--->|  REP  |
+#-------#     #--------+--------#     #--------+--------#     #-------#
+
+.
